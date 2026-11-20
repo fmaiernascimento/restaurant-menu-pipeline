@@ -1,0 +1,188 @@
+[
+  {
+    "id": "dufke",
+    "restaurant": "Restaurant DUFKE",
+    "format": "text_pdf",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://restaurant-dufke.de/speisekarte/speisekarte-pdf",
+    "urls": [
+      "https://restaurant-dufke.de/fileadmin/Speisekarte/Restaurant_DUFKE_Speisekarte.pdf"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "berg",
+    "restaurant": "Restaurant Berg",
+    "format": "text_pdf",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://www.restaurantberg.de/speisekarten/",
+    "urls": [
+      "https://www.restaurantberg.de/app/download/16950521724/SpeisekarteBerg2025.pdf?t=1746188516"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "dishoom",
+    "restaurant": "Dishoom Manchester",
+    "format": "text_pdf",
+    "split": "development",
+    "language": "en",
+    "source_page": "https://www.dishoom.com/menu/manchester-all-day/",
+    "urls": [
+      "https://cdn.sanity.io/files/daku84np/production/ff93fe7d7c9978c493e454c12f734f7d19b96e92.pdf"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "loloata",
+    "restaurant": "Sea Breeze, Loloata Island Resort",
+    "format": "text_pdf",
+    "split": "test",
+    "language": "en",
+    "source_page": "https://www.loloataislandresort.com/library/pdfs/loloata-lunch-menu-20.10.25.pdf",
+    "urls": [
+      "https://www.loloataislandresort.com/library/pdfs/loloata-lunch-menu-20.10.25.pdf"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "duck-on-the-pond",
+    "restaurant": "The Duck on the Pond (Harvest Kitchen sample)",
+    "format": "text_pdf",
+    "split": "test",
+    "language": "en",
+    "source_page": "https://www.theduckonthepond.co.uk/files/homepage/2022/09/1662728752_Sample-Menu-PDF.pdf",
+    "urls": [
+      "https://www.theduckonthepond.co.uk/files/homepage/2022/09/1662728752_Sample-Menu-PDF.pdf"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "salut",
+    "restaurant": "SALUT Restaurant",
+    "format": "html",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://salut-restaurant.de/menue/",
+    "urls": [
+      "https://salut-restaurant.de/menue/"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "vonbis",
+    "restaurant": "Von Bis Restaurant",
+    "format": "html",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://vonbis-restaurant.de/speisekarte",
+    "urls": [
+      "https://vonbis-restaurant.de/speisekarte"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "hollberg",
+    "restaurant": "Restaurant Hollberg",
+    "format": "html",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://restaurant-hollberg.de/speisekarte/",
+    "urls": [
+      "https://restaurant-hollberg.de/speisekarte/"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "fino",
+    "restaurant": "FINO Cromer",
+    "format": "html",
+    "split": "test",
+    "language": "en",
+    "source_page": "https://www.finocromer.co.uk/menu",
+    "urls": [
+      "https://www.finocromer.co.uk/menu"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "fuchsbau",
+    "restaurant": "Fuchsbau",
+    "format": "html",
+    "split": "test",
+    "language": "de",
+    "source_page": "https://www.fuchsbau-catering.de/speisekarte-1",
+    "urls": [
+      "https://www.fuchsbau-catering.de/speisekarte-1"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "mediterran",
+    "restaurant": "Mediterran Coburg",
+    "format": "ocr",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://www.mediterran-coburg.de/speisekarte/",
+    "urls": [
+      "https://www.mediterran-coburg.de/wp-content/uploads/saisonkarte-restaurant-mediterran_coburg.pdf"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "ramenya",
+    "restaurant": "Ramen-Ya",
+    "format": "ocr",
+    "split": "development",
+    "language": "en",
+    "source_page": "https://ramen-ya.nl/",
+    "urls": [
+      "https://ramen-ya.nl/wp-content/uploads/2025/04/menu-2024.png"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "retro",
+    "restaurant": "Restaurant RETRO",
+    "format": "ocr",
+    "split": "development",
+    "language": "en",
+    "source_page": "https://www.restaurant-retro.net/%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F-speisekarte",
+    "urls": [
+      "https://static.wixstatic.com/media/d85c99_386e096c363e4febb629b07df5be7829~mv2.jpg",
+      "https://static.wixstatic.com/media/d85c99_cecd7035f9c34767958a0de7992effa9~mv2.jpg",
+      "https://static.wixstatic.com/media/d85c99_78e8b11c3b3d4d6d96331cace26dc3f9~mv2.jpg",
+      "https://static.wixstatic.com/media/d85c99_965938c4ddbe41e692cd32cabde76355~mv2.jpg",
+      "https://static.wixstatic.com/media/d85c99_89c154f5e4144a019f50fb8a480d2811~mv2.jpg",
+      "https://static.wixstatic.com/media/d85c99_893178506957456282e2dad8ae81a6bb~mv2.jpg"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "goldberg",
+    "restaurant": "Restaurant Goldberg",
+    "format": "ocr",
+    "split": "development",
+    "language": "de",
+    "source_page": "https://www.restaurant-goldberg.de/speisekarte/speisekarte-zum-mitnehmen/",
+    "urls": [
+      "https://image.jimcdn.com/app/cms/image/transf/dimension=1070x10000:format=jpg/path/s764b748667a41ed8/image/i727c0a2bcacf8e3c/version/1718979729/image.jpg",
+      "https://image.jimcdn.com/app/cms/image/transf/dimension=1070x10000:format=jpg/path/s764b748667a41ed8/image/i933c4d8fe4684b5a/version/1718979794/image.jpg"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  },
+  {
+    "id": "zurpost",
+    "restaurant": "Hotel zur Post, Wiesmoor",
+    "format": "ocr",
+    "split": "test",
+    "language": "de",
+    "source_page": "https://www.hotelzurpost-wiesmoor.de/speisekarte",
+    "urls": [
+      "https://static.wixstatic.com/media/cc688b_1425f9e8bd2045a9bf54ee36a55c8284~mv2.jpg/v1/fill/w_639,h_804,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Kinderkarte.jpg"
+    ],
+    "rights_status": "No open redistribution license verified; local study copy."
+  }
+]
