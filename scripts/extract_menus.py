@@ -106,15 +106,53 @@ def html_records(source, asset):
                 match = prices(price.get_text(' ', strip=True))[0]
                 results.append(record(source, asset, name.get_text(' ', strip=True), amount(match.group()), item.get_text(' ', strip=True)))
     elif source['id'] == 'salut':
+        drink_sections = {
+            'KALTE GETRÄNKE': r'SOFTDRINKS|BIO-LIMONADEN & SCHORLEN|WASSER|BIERE',
+            'OFFENE WEINE': r'SCHAUMWEIN|WEISSWEIN|ROTWEIN|ROSÉ',
+        }
         for row in soup.select('.fusion-builder-row'):
             headings = row.select('h4, h5')
             if len(headings) != 2:
                 continue
             name, price_text = [node.get_text(' ', strip=True) for node in headings]
             match = re.fullmatch(r'(?:(klein|groß)\s+)?(\d{1,3}(?:[,.]\d{1,2})?)', price_text)
-            if match and re.search(r'[A-Za-zÄÖÜäöü]', name):
-                results.append(record(source, asset, name, amount(match.group(2)), row.get_text(' ', strip=True), variant=match.group(1) or ''))
+            if re.search(r'[A-Za-zÄÖÜäöü]', name):
+                section = row.find_previous('h3')
+                category = ''
+                section_name = section.get_text(' ', strip=True) if section else ''
+                if section_name in {'SPEISEN', 'DESSERTS', 'KAFFEE & TEE'}:
+                    category = section_name
+                elif section_name == 'SALUT STYLE':
+                    subsection = row.find_previous('h4', string=re.compile(r'^\s*(VORSPEISEN|HAUPTGANG)\s*$'))
+                    if subsection:
+                        category = subsection.get_text(' ', strip=True)
+                evidence = row.get_text(' ', strip=True)
+                if match:
+                    results.append(record(source, asset, name, amount(match.group(2)),
+                                          evidence, variant=match.group(1) or '', category=category))
+                elif section_name in drink_sections:
+                    subsection = row.find_previous('h4', string=re.compile(
+                        rf'^\s*(?:{drink_sections[section_name]})\s*$'))
+                    category = subsection.get_text(' ', strip=True) if subsection else section_name
+                    for option in price_text.split('|'):
+                        serving = re.fullmatch(r'\s*(\d+,\d+\s*L)\s*·\s*(\d{1,3}(?:,\d{1,2})?)\s*', option)
+                        if serving:
+                            results.append(record(source, asset, name, amount(serving.group(2)),
+                                                  evidence, variant=serving.group(1), category=category))
     else:
+        schnitzel_section = soup.select_one('#schweineschnitzel-variationen')
+        shared_options = []
+        if schnitzel_section:
+            shared_heading = schnitzel_section.find('h4', string='Wahlweise serviert')
+            if shared_heading:
+                option_card = shared_heading.find_parent('article')
+                for price_node in option_card.select('p[data-sanity*=".variants:"]'):
+                    price_match = prices(price_node.get_text(' ', strip=True))
+                    label = price_node.find_previous_sibling('p')
+                    if price_match and label:
+                        shared_options.append((label.get_text(' ', strip=True),
+                                               amount(price_match[0].group()),
+                                               price_node.parent.get_text(' ', strip=True)))
         for heading in soup.select('h4'):
             row = heading.parent.parent
             price_nodes = row.find_all('p', recursive=False)
@@ -122,21 +160,39 @@ def html_records(source, asset):
             matches = prices(price_text)
             if matches:
                 for match in matches:
-                    results.append(record(source, asset, heading.get_text(' ', strip=True), amount(match.group()), row.parent.get_text(' ', strip=True)))
+                    result = record(source, asset, heading.get_text(' ', strip=True),
+                                    amount(match.group()), row.parent.get_text(' ', strip=True))
+                    if heading.find_parent(id='schweineschnitzel-variationen') and '€ extra' in price_text:
+                        result['item_kind'] = 'supplement'
+                        result['category'] = 'Schweineschnitzel Variationen'
+                    results.append(result)
             elif heading.get_text(' ', strip=True).startswith('Schnitzel'):
-                # These three dishes share accompaniment prices elsewhere on the page.
-                results.append(record(source, asset, heading.get_text(' ', strip=True), '', row.get_text(' ', strip=True), flags=['shared_price_options']))
+                name = heading.get_text(' ', strip=True)
+                if shared_options and heading.find_parent(id='schweineschnitzel-variationen'):
+                    for variant, price, evidence in shared_options:
+                        results.append(record(source, asset, name, price, f'{name} | {evidence}',
+                                              variant=variant, category='Schweineschnitzel Variationen',
+                                              flags=['shared_price_options']))
+                else:
+                    results.append(record(source, asset, name, '', row.get_text(' ', strip=True),
+                                          flags=['shared_price_options']))
     return results, soup.get_text('\n', strip=True)
 
 
-def pdf_lines(path, boundaries):
+def pdf_lines(path, boundaries, *, menu_id=None):
     pages = []
     with pdfplumber.open(path) as document:
         for page_number, page in enumerate(document.pages, start=1):
             for column, (left, right) in enumerate(zip(boundaries, boundaries[1:]), start=1):
                 cropped = page.crop((page.width * left, 0, page.width * right, page.height))
+                checked_dishoom_column = menu_id == 'dishoom'
+                if checked_dishoom_column:
+                    # Use the actual gutters between columns.
+                    gutters = (page.width * boundaries[0], 232, 427, 622, page.width * boundaries[-1])
+                    cropped = page.within_bbox((gutters[column - 1], 0, gutters[column], page.height))
                 lines = []
-                for line in cropped.extract_text_lines(x_tolerance=2, y_tolerance=3):
+                x_tolerance = 3 if checked_dishoom_column else 2
+                for line in cropped.extract_text_lines(x_tolerance=x_tolerance, y_tolerance=3):
                     lines.append({'text': clean(line['text']), 'x': line['x0'], 'y': line['top'], 'confidence': None})
                 pages.append({'page': page_number, 'column': column, 'lines': lines})
     return pages
@@ -188,6 +244,8 @@ def ocr_lines(path, asset, engine, boundaries):
 
 
 def layout_records(source, asset, pages):
+    if source['id'] == 'berg':
+        return berg_records(source, asset, pages)
     mode = PROFILES[source['id']]['mode']
     method = 'ocr' if source['format'] == 'ocr' else 'pdf_text'
     results = []
@@ -200,6 +258,32 @@ def layout_records(source, asset, pages):
             matches = list(DUFKE_PRICE.finditer(text)) if source['id'] == 'dufke' else prices(text)
             letter_text = re.sub(r'[^A-Za-zÄÖÜäöüß]', '', text)
             is_heading = len(letter_text) >= 3 and letter_text.isupper() and not matches
+            dishoom_drinks = source['id'] == 'dishoom' and page['page'] == 2 and page['column'] == 4
+            if dishoom_drinks and is_heading and (heading, text) in {
+                ('ROAD SODA NEW ENGLAND', 'PALE ALE'),
+                ('PINEAPPLE & PEPPER', 'CRUMBLE SOUR (CAN)'),
+            }:
+                heading = f'{heading} {text}'
+                context.append(text)
+                continue
+            if source['id'] == 'dishoom' and page['page'] == 2 and page['column'] == 3:
+                if is_heading and context and (
+                    context[-1].endswith((':', ','))
+                    or heading in {'H-HERO ROSATO: LA CANTINA', 'POMELADO SKIN-CONTACT'}
+                ):
+                    heading = f'{heading} {text}'
+                    context.append(text)
+                    continue
+            if source['id'] == 'dishoom' and page['page'] == 2 and page['column'] <= 2:
+                if is_heading and context == [heading] and (':' in heading or heading in {'BLOOD-ORANGE', 'PERMIT ROOM', 'BALARAM STREET'}):
+                    heading = f'{heading} {text}'
+                    context.append(text)
+                    continue
+            if source['id'] == 'dishoom' and page['page'] == 1 and page['column'] == 4:
+                if text == '(HALF PORTION)' or (text == 'BUTTER-BHUTTA' and heading == 'ALL-NEW CHILLI'):
+                    heading = f'{heading} {text}'
+                    context.append(text)
+                    continue
             is_numbered = bool(re.match(r'^\d{1,3}[.)]?\s+[A-Za-zÄÖÜäöü]', text))
             if is_heading or (mode == 'numbered' and is_numbered):
                 heading = text
@@ -214,7 +298,11 @@ def layout_records(source, asset, pages):
             variant = ''
             if mode == 'heading':
                 name = heading
+                if source['id'] == 'dishoom' and page['page'] == 2 and page['column'] == 2 and text.startswith(('Freshly Squeezed ', 'Grapefruit Juice')):
+                    name = re.split(r'\s+\.{2,}', ' '.join(context[-2:]) if text.startswith('Grapefruit Juice') else text)[0]
                 flags.append('heading_price_association')
+                if source['id'] == 'dishoom' and text.startswith('(Or vegan with tender veg.'):
+                    variant = 'vegan with tender veg'
             elif mode == 'numbered' and not is_numbered:
                 name = heading or before
                 variant = before
@@ -235,12 +323,80 @@ def layout_records(source, asset, pages):
                             name = previous_name
             if len(matches) > 1:
                 flags.append('multiple_prices')
-            for match in matches:
+            for index, match in enumerate(matches):
+                if dishoom_drinks:
+                    if text.startswith('Espresso: Single / Double') and len(matches) == 2:
+                        name = 'Espresso'
+                        variant = ('Single', 'Double')[index]
+                    elif text.startswith('Cappuccino / Caffelatte / Flat White'):
+                        for coffee in ('Cappuccino', 'Caffelatte', 'Flat White'):
+                            results.append(record(source, asset, coffee, amount(match.group()), text,
+                                                  page=page['page'], column=page['column'], method=method))
+                        continue
+                    else:
+                        sizes = re.findall(r'\b(\d+)\s*ml\b', text[:matches[0].start()])
+                        if len(sizes) == len(matches):
+                            variant = f'{sizes[index]} ml'
+                if source['id'] == 'dishoom' and page['page'] == 2 and page['column'] == 3:
+                    if len(matches) == 3:
+                        variant = ('175 ml glass', '500 ml carafe', '750 ml bottle')[index]
+                    elif text.startswith('125ml / 750ml') and len(matches) == 2:
+                        variant = ('125 ml glass', '750 ml bottle')[index]
+                    elif len(matches) == 1 and re.search(r'750\s*ml\s*$', text[:match.start()]):
+                        variant = '750 ml bottle'
+                if source['id'] == 'dishoom' and page['page'] == 2 and page['column'] <= 2 and len(matches) == 3:
+                    variant = ('175 ml glass', '500 ml carafe', '750 ml bottle')[index]
                 results.append(record(source, asset, name, amount(match.group()), ' | '.join(context[-8:]),
                                       page=page['page'], column=page['column'], variant=variant,
                                       method=method, confidence=line['confidence'], flags=flags))
             previous_name = name
             context = []
+    return results
+
+
+def berg_records(source, asset, pages):
+    """Use Berg's item numbers to distinguish price rows from menu notes."""
+    results = []
+    for page in pages:
+        pending = ''
+        category = ''
+        for line in page['lines']:
+            text = line['text']
+            if text in {'Weißweine', 'Roséweine', 'Rotweine'}:
+                category = text
+                pending = ''
+                continue
+            item = re.fullmatch(r'(\d{3}(?:/\d{3})?)\s+(.+)', text)
+            matches = prices(text)
+            if item and not matches:
+                pending = text
+                continue
+            if pending and re.fullmatch(r'\d{1,3},\d{2}', text):
+                text = f'{pending} {text}'
+                item = re.fullmatch(r'(\d{3}(?:/\d{3})?)\s+(.+)', text)
+                matches = prices(text)
+            if not item or not matches:
+                continue
+            pending = ''
+            name = text[item.start(2):matches[0].start()].strip()
+            size = re.search(r'\s+(\d+(?:,\d+)?\s*(?:cl|l)(?:\s+Flasche)?)$', name)
+            variant = size.group(1) if size else ''
+            if size:
+                name = name[:size.start()]
+            name = re.sub(r'\s+\d+\s*%$', '', name)
+            for index, match in enumerate(matches):
+                if len(matches) == 2 and '/' in item.group(1):
+                    if index == 0:
+                        variant = '¼ l'
+                    elif page['page'] == 9:
+                        variant = 'Flasche 1 l'
+                    else:
+                        variant = text[matches[0].end():match.start()].strip()
+                        if not re.search(r'\d', variant):
+                            variant = f'½ l {variant}'.strip()
+                results.append(record(source, asset, name, amount(match.group()), text,
+                                      page=page['page'], column=page['column'],
+                                      variant=variant, category=category, method='pdf_text'))
     return results
 
 
@@ -284,7 +440,7 @@ def run(sources, output=OUTPUT):
             else:
                 boundaries = PROFILES[source['id']]['columns']
                 if source['format'] == 'text_pdf':
-                    pages = pdf_lines(path, boundaries)
+                    pages = pdf_lines(path, boundaries, menu_id=source['id'])
                 else:
                     if engine is None:
                         from rapidocr import RapidOCR, LangRec, OCRVersion, ModelType
