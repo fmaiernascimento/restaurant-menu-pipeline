@@ -104,7 +104,38 @@ def html_records(source, asset):
             price = item.select_one('.eltdf-pricing-price')
             if name and price and prices(price.get_text(' ', strip=True)):
                 match = prices(price.get_text(' ', strip=True))[0]
-                results.append(record(source, asset, name.get_text(' ', strip=True), amount(match.group()), item.get_text(' ', strip=True)))
+                dish = name.get_text(' ', strip=True)
+                heading = item.find_previous('h4')
+                # Hollberg prints three burgers before its Burger heading.
+                section = heading.get_text(strip=True) if heading else ''
+                category = ''
+                variant = ''
+                if section == 'Burger' or (section == 'Salate' and 'burger' in dish.casefold()):
+                    category = 'Burger'
+                elif section == 'Salate' and 'salat' in dish.casefold():
+                    category = 'Salate'
+                elif section == 'Steaks':
+                    category = section
+                    description = item.select_one('.eltdf-pricing-desc')
+                    weight = description.get_text(' ', strip=True) if description else ''
+                    portion = re.fullmatch(r'(\d+)\s*g', weight)
+                    if portion:
+                        variant = f'{portion.group(1)} g'
+                elif section == 'Beilagen':
+                    category = section
+                    portion = re.fullmatch(r'(\d+ Pfund) (.+)', dish)
+                    if portion:
+                        variant, dish = portion.groups()
+                elif section == 'Desserts':
+                    category = section
+                elif section == 'Limonade':
+                    category = section
+                    serving = re.fullmatch(r'(.+?)\s+(\d+,\d+)\s*l', dish)
+                    if serving:
+                        dish = serving.group(1)
+                        variant = f'{serving.group(2)} L'
+                results.append(record(source, asset, dish, amount(match.group()),
+                                      item.get_text(' ', strip=True), category=category, variant=variant))
     elif source['id'] == 'salut':
         drink_sections = {
             'KALTE GETRÄNKE': r'SOFTDRINKS|BIO-LIMONADEN & SCHORLEN|WASSER|BIERE',
@@ -158,10 +189,53 @@ def html_records(source, asset):
             price_nodes = row.find_all('p', recursive=False)
             price_text = ' '.join(node.get_text(' ', strip=True) for node in price_nodes)
             matches = prices(price_text)
+            drink_categories = {
+                'soft-drinks': 'Soft Drinks',
+                'flaschenbier': 'Flaschenbier',
+                'weine': 'Weine',
+                'sekt-cocktails': 'Sekt & Cocktails',
+                'heissgetraenke': 'Heißgetränke',
+                'weinbrand': 'Weinbrand',
+                'whisky': 'Whisky',
+            }
+            drink_section = heading.find_parent('section', id=list(drink_categories))
+            if drink_section:
+                category = drink_categories[drink_section['id']]
+                name = heading.get_text(' ', strip=True)
+                article = heading.find_parent('article')
+                evidence = article.get_text(' ', strip=True)
+                for price_node in article.select('p[data-sanity*=".variants:"]'):
+                    price_match = prices(price_node.get_text(' ', strip=True))
+                    label = price_node.find_previous_sibling('p')
+                    if price_match and label:
+                        results.append(record(source, asset, name, amount(price_match[0].group()),
+                                              evidence, variant=label.get_text(' ', strip=True),
+                                              category=category))
+                size = re.search(r'\s+(\d+,\d+\s*l)$', name, re.I)
+                for match in matches:
+                    results.append(record(source, asset, name[:size.start()] if size else name,
+                                          amount(match.group()), evidence,
+                                          variant=size.group(1) if size else '', category=category))
+                continue
             if matches:
                 for match in matches:
-                    result = record(source, asset, heading.get_text(' ', strip=True),
-                                    amount(match.group()), row.parent.get_text(' ', strip=True))
+                    section = heading.find_parent('section')
+                    category = {
+                        'burger': 'Burger',
+                        'salate-und-bowls': 'Salate und Bowls',
+                        'vegane-optionen': 'Vegane Optionen',
+                        'folienkartoffel': 'Folienkartoffel',
+                        'pasta': 'Pasta',
+                        'bratwurst-und-frikadelle': 'Bratwurst und Frikadelle',
+                        'beilagen': 'Beilagen',
+                    }.get(section.get('id') if section else None, '')
+                    name = heading.get_text(' ', strip=True)
+                    variant = ''
+                    if category == 'Folienkartoffel' and name.startswith('mit '):
+                        name, variant = category, name
+                    result = record(source, asset, name,
+                                    amount(match.group()), row.parent.get_text(' ', strip=True),
+                                    category=category, variant=variant)
                     if heading.find_parent(id='schweineschnitzel-variationen') and '€ extra' in price_text:
                         result['item_kind'] = 'supplement'
                         result['category'] = 'Schweineschnitzel Variationen'
