@@ -318,6 +318,23 @@ def ocr_lines(path, asset, engine, boundaries):
 
 
 def layout_records(source, asset, pages):
+    if source['id'] in {'mediterran', 'ramenya', 'retro'}:
+        transcription_path = ROOT / 'data' / f"{source['id']}_transcription.json"
+        transcription = json.loads(transcription_path.read_text(encoding='utf-8'))
+        transcriptions = transcription if isinstance(transcription, list) else [transcription]
+        transcription = next((entry for entry in transcriptions if entry['sha256'] == asset['sha256']), None)
+        if transcription is None:
+            raise ValueError(f"{source['restaurant']} source changed; verify the transcription against the new file.")
+        results = []
+        for item in transcription['items']:
+            variant = item.get('variant', '')
+            evidence = ' | '.join(filter(None, (item['name'], variant, item['price'])))
+            row = record(source, asset, item['name'], item['price'], evidence,
+                         page=transcription['page'], variant=variant,
+                         category=item.get('category', ''), method='manual_transcription')
+            row['review_status'] = 'verified'
+            results.append(row)
+        return results
     if source['id'] == 'berg':
         return berg_records(source, asset, pages)
     mode = PROFILES[source['id']]['mode']

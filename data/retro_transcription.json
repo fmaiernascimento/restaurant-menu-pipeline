@@ -1,0 +1,77 @@
+[
+  {
+    "sha256": "1e38e46170078d3eeb8e4f0d5d92dc11804e29c32ea31baf85eb1b000ea3090f",
+    "page": 1,
+    "items": [
+      {"category":"Salate","name":"Caesar-Salat","price":"11.90"},
+      {"category":"Salate","name":"Griechischer-Salat","price":"10.90"},
+      {"category":"Salate","name":"Großer Salat der Saison","price":"7.50"},
+      {"category":"Salate","name":"Kleiner Salat der Saison","price":"5.90"},
+      {"category":"Suppen","name":"Tomatencremesuppe","price":"5.50"},
+      {"category":"Suppen","name":"Ukrainische Suppe","price":"7.50","variant":"Soljanka oder Borschtsch"},
+      {"category":"Unsere Klassiker","name":"Currywurst mit Currysauce und Pommes frites","price":"10.90"}
+    ]
+  },
+  {
+    "sha256": "beab3e0217717ef66a72139023a740060f3f2516b2e13b3faa5b03917267fb42",
+    "page": 2,
+    "items": [
+      {"category":"Unsere Klassiker","name":"Bauernfrühstück mit Bratkartoffeln und 2 Spiegeleiern","price":"10.90"},
+      {"category":"Unsere Klassiker","name":"Matjesfilet mit Kartoffelspalten oder Pommes frites","price":"10.50","variant":"1 Stück Matjesfilet"},
+      {"category":"Unsere Klassiker","name":"Matjesfilet mit Kartoffelspalten oder Pommes frites","price":"12.50","variant":"2 Stück Matjesfilet"},
+      {"category":"Unsere Klassiker","name":"Hähnchenrouladen mit Champignonfüllung","price":"12.50","variant":"mit Kartoffelspalten oder Pommes frites"},
+      {"category":"Unsere Klassiker","name":"Geschnetzeltes Schweinefleisch mit Kartoffeln in Gemüsesoße","price":"12.90"},
+      {"category":"Unsere Klassiker","name":"Pelmeni","price":"12.90","variant":"mit Brühe oder Schmand"},
+      {"category":"Unsere Klassiker","name":"Pelmeni","price":"13.50","variant":"mit Champignons in Rahmsoße"},
+      {"category":"Unsere Klassiker","name":"Teigtaschen (Wareniki)","price":"10.50","variant":"mit Kartoffelpüree und Zwiebeln"}
+    ]
+  },
+  {
+    "sha256": "1946c0e3f62c8da14d3d8246e3aa30efe566675dfdae4425d9f52afd8f602dc5",
+    "page": 3,
+    "items": [
+      {"category":"Unsere Klassiker","name":"Lachsauflauf mit Gemüse in Rahmsoße","price":"14.50"},
+      {"category":"Aus der Pfanne","name":"Schnitzel Wiener Art mit Zitrone","price":"12.50"},
+      {"category":"Aus der Pfanne","name":"Schnitzel Jäger Art mit Champignonrahmsoße","price":"13.50"},
+      {"category":"Aus der Pfanne","name":"Schnitzel Holsteiner Art mit 2 Spiegeleiern","price":"13.50"},
+      {"category":"Aus der Pfanne","name":"Hausgemachte Frikadelle à la Retró","price":"12.50"},
+      {"category":"Aus der Pfanne","name":"Hausgemachte Frikadelle à la Retró","price":"14.50","variant":"mit zusätzlicher Frikadelle"},
+      {"category":"Aus der Pfanne","name":"Gebratener Lachs mit Gemüse","price":"14.50"}
+    ]
+  },
+  {
+    "sha256": "b5da631cd81af6e1f26f7f258ca3bc1626d1394fd25df2d3a365c65c6aa389c8",
+    "page": 4,
+    "items": [
+      {"category":"Pasta","name":"Spaghetti Carbonara mit Speckwürfeln und geriebenem Käse","price":"10.90"},
+      {"category":"Pasta","name":"Spaghetti mit Gemüse und geriebenem Käse","price":"10.90"},
+      {"category":"Kleinigkeiten für Kind und Kegel","name":"Kinderschnitzel vom Schwein mit Pommes frites","price":"8.90"},
+      {"category":"Kleinigkeiten für Kind und Kegel","name":"Currywurst mit Currysauce und Pommes frites","price":"8.90","variant":"kleine Portion"},
+      {"category":"Kleinigkeiten für Kind und Kegel","name":"Currywurst mit Brötchen","price":"7.90"},
+      {"category":"Kleinigkeiten für Kind und Kegel","name":"Pommes mit Mayo oder Ketchup","price":"6.00"}
+    ]
+  },
+  {
+    "sha256": "632be3976435ed2a9a480d3ff169ee0fe09f2ee208e78d6412c128545c69af24",
+    "page": 5,
+    "items": [
+      {"category":"Brotzeit","name":"Matjesfilet mit Brötchen und Butter","price":"7.90"},
+      {"category":"Brotzeit","name":"Matjesfilet mit Brötchen und Butter","price":"9.90","variant":"mit zusätzlichem Matjesfilet"},
+      {"category":"Burger","name":"Burger","price":"10.90"},
+      {"category":"Burger","name":"Big Doppel","price":"12.90","variant":"2 Burger"},
+      {"category":"Burger","name":"Cheese Burger","price":"11.50"},
+      {"category":"Burger","name":"Big Doppel Cheese","price":"13.50","variant":"2 Burger"}
+    ]
+  },
+  {
+    "sha256": "a383e7a202e8d5e158e0fb0622f79ba34126ff4526950237aee421ef67f70834",
+    "page": 6,
+    "items": [
+      {"category":"Dessert","name":"Hausgemachter Kuchen mit Schlagsahne und Sirup","price":"4.50"},
+      {"category":"Dessert","name":"Eis mit Sahne und Sirup","price":"4.50"},
+      {"category":"Dessert","name":"Eis","price":"1.50","variant":"pro Kugel"},
+      {"category":"Mahlzeiten nach Vorbestellung","name":"Grünkohl mit Salzkartoffeln, Bregenwurst, Kasselerkotelett und geräuchertem Speck","price":"20.90"},
+      {"category":"Mahlzeiten nach Vorbestellung","name":"Ganzes Huhn gefüllt mit Reis, Champignons, Karotten und Zwiebeln","price":"45.00","variant":"mit Kartoffeln und Salat"}
+    ]
+  }
+]

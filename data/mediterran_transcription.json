@@ -1,0 +1,18 @@
+{
+  "sha256": "640a67858efc59719a7e354a0102ed59901c815cd67076f810e1633a337461d4",
+  "page": 1,
+  "items": [
+    {"name": "Timo Vermentino, Weißwein trocken", "variant": "1 Glas", "price": "7.90"},
+    {"name": "Spargelcremesuppe", "category": "Vorspeisen", "price": "7.50"},
+    {"name": "Schafskäse überbacken", "category": "Vorspeisen", "price": "8.90"},
+    {"name": "Jakobsmuschel überbacken", "category": "Vorspeisen", "price": "9.10"},
+    {"name": "Rote-Bete-Carpaccio", "category": "Vorspeisen", "price": "13.90"},
+    {"name": "Schiefe Pizza mit Spargel, Shrimps, Parmesan, Knoblauch und Schnittlauch", "category": "Pizza", "price": "19.40"},
+    {"name": "Pizza mit Spargel, Parmaschinken, Parmesan und Schnittlauch", "category": "Pizza", "price": "18.90"},
+    {"name": "Pappardelle mit Spargel und Shrimps in Bärlauchsoße", "category": "Pasta", "price": "18.80"},
+    {"name": "Ravioli gemischt mit Bärlauch und Spargel in Salbeibuttersoße", "category": "Pasta", "price": "16.40"},
+    {"name": "Lachs gegrillt mit Spargel und Salzkartoffel", "category": "Fisch", "price": "33.00"},
+    {"name": "Argentinisches Roastbeef mit Spargel und Salzkartoffeln", "category": "Fleisch", "price": "36.40"},
+    {"name": "Spargelgenuss mit Salzkartoffel, Parmaschinken und Buttersoße", "price": "19.90"}
+  ]
+}
